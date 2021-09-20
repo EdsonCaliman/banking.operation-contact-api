@@ -1,4 +1,6 @@
-﻿using Banking.Operation.Contact.Infra.Data;
+﻿using Banking.Operation.Contact.Domain.Contact.Repositories;
+using Banking.Operation.Contact.Infra.Data;
+using Banking.Operation.Contact.Infra.Data.Contact.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,8 @@ namespace Net.Core.Template.CrossCutting.Ioc.Modules
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 26));
 
             services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, serverVersion));
+
+            services.AddScoped<IContactRepository, ContactRepository>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Banking.Operation.Contact.Domain.Contact.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Banking.Operation.Contact.Infra.Data
 {
@@ -9,5 +10,8 @@ namespace Banking.Operation.Contact.Infra.Data
         {
 
         }
+
+        public DbSet<ClientEntity> Clients { get; set; }
+        public DbSet<ContactEntity> Contacts { get; set; }
     }
 }
