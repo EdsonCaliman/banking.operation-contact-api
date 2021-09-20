@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  banking.operation.contact.api:
+    container_name: contact.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:DefaultConnection=server=mysql;user=root;password=1234;database=banking-operation-client"
+    ports:
+      - "8001:80"
