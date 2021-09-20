@@ -20,7 +20,9 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
 
         public List<ResponseContactDto> GetAll(Guid clientid)
         {
-            var contactList = _contactRepository.Get().Where(c => c.ClientId == clientid);
+            var queryables = _contactRepository.Get();
+
+            var contactList = queryables.Where(c => c.ClientId == clientid);
 
             return contactList.Select(c => new ResponseContactDto(c)).ToList();
         }
