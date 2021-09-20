@@ -1,5 +1,6 @@
 ﻿using Banking.Operation.Contact.Domain.Contact.Repositories;
 using Banking.Operation.Contact.Infra.Data;
+using Banking.Operation.Contact.Infra.Data.Client.Repositories;
 using Banking.Operation.Contact.Infra.Data.Contact.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Net.Core.Template.CrossCutting.Ioc.Modules
             services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, serverVersion));
 
             services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
         }
     }
 }

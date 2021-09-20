@@ -1,5 +1,4 @@
-﻿using Banking.Operation.Contact.Domain.Abstractions.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Banking.Operation.Contact.Domain.Contact.Entities
@@ -18,20 +17,6 @@ namespace Banking.Operation.Contact.Domain.Contact.Entities
 
         public ClientEntity()
         {
-        }
-
-        public ClientEntity(Guid id, string name, string email)
-        {
-            Id = id;
-            Name = name;
-            Email = email;
-            CreatedAt = DateTime.Now;
-            CreatedBy = CreatorHelper.GetEntityCreatorIdentity();
-        }
-
-        public void DefineRandomAcccount()
-        {
-            Account = new Random().Next(1000, 5000);
         }
     }
 }

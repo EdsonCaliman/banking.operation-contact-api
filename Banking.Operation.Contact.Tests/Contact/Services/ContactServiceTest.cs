@@ -1,4 +1,5 @@
-﻿using Banking.Operation.Contact.Domain.Contact.Dtos;
+﻿using Banking.Operation.Client.Domain.Client.Services;
+using Banking.Operation.Contact.Domain.Contact.Dtos;
 using Banking.Operation.Contact.Domain.Contact.Entities;
 using Banking.Operation.Contact.Domain.Contact.Repositories;
 using Banking.Operation.Contact.Domain.Contact.Services;
@@ -16,38 +17,43 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
     {
         private IContactService _contactService;
         private Mock<IContactRepository> _contactRepository;
+        private Mock<IClientService> _clientService;
+        private ClientEntity _client;
 
         [SetUp]
         public void SetUp()
         {
             _contactRepository = new Mock<IContactRepository>();
-            _contactService = new ContactService(_contactRepository.Object);
+            _clientService = new Mock<IClientService>();
+            _contactService = new ContactService(_contactRepository.Object, _clientService.Object);
+
+            var clientId = Guid.NewGuid();
+            _client = new ClientEntity { Id = clientId, Name = "Test", Email = "test" };
+            _clientService.Setup(c => c.GetOne(clientId)).Returns(Task.FromResult(_client));
         }
 
         [Test]
         public void ShouldReturnContact()
         {
-            var idClient = Guid.NewGuid();
             var idContact = Guid.NewGuid();
-            var contact = new ContactEntity("Test", idClient);
-            _contactRepository.Setup(c => c.FindOne(c => c.ClientId == idClient && c.Id == idContact)).Returns(Task.FromResult(contact));
+            var contact = new ContactEntity("Test", _client);
+            _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contact));
 
-            var ContactSaved = _contactService.GetOne(idClient, idContact);
+            var ContactSaved = _contactService.GetOne(_client.Id, idContact);
 
             Assert.IsNotNull(ContactSaved);
         }
 
         [Test]
-        public void ShouldReturnAllContacts()
+        public async Task ShouldReturnAllContacts()
         {
-            var idClient = Guid.NewGuid();
             var contactList = new List<ContactEntity> {
-                new ContactEntity("Test", idClient),
-                new ContactEntity("Test", idClient)
+                new ContactEntity("Test", _client),
+                new ContactEntity("Test", _client)
                 }.AsQueryable();
             _contactRepository.Setup(c => c.Get()).Returns(contactList);
 
-            var contactListSaved = _contactService.GetAll(idClient);
+            var contactListSaved = await _contactService.GetAll(_client.Id);
 
             Assert.IsNotNull(contactListSaved);
             Assert.AreEqual(2, contactListSaved.Count);
@@ -56,10 +62,9 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         [Test]
         public void ShouldSaveContact()
         {
-            var idClient = Guid.NewGuid();
             var contact = new RequestContactDto { Name = "test" };
 
-            var contactSaved = _contactService.Save(idClient, contact);
+            var contactSaved = _contactService.Save(_client.Id, contact);
 
             Assert.IsNotNull(contactSaved);
             _contactRepository.Verify(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>()));
@@ -69,13 +74,12 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         [Test]
         public async Task ShouldUpdateContact()
         {
-            var idClient = Guid.NewGuid();
             var idContact = Guid.NewGuid();
             var contact = new RequestContactDto { Name = "test" };
-            var contactSaved = new ContactEntity("other", idContact);
-            _contactRepository.Setup(c => c.FindOne(c => c.ClientId == idClient && c.Id == idContact)).Returns(Task.FromResult(contactSaved));
+            var contactSaved = new ContactEntity("other", _client);
+            _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contactSaved));
 
-            var ContactUpdated = await _contactService.Update(idClient, idContact, contact);
+            var ContactUpdated = await _contactService.Update(_client.Id, idContact, contact);
 
             Assert.IsNotNull(ContactUpdated);
             Assert.AreEqual(contact.Name, ContactUpdated.Name);
@@ -85,12 +89,11 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         [Test]
         public void ShouldDeleteContact()
         {
-            var idClient = Guid.NewGuid();
             var idContact = Guid.NewGuid();
-            var Contact = new ContactEntity("Test", idContact);
-            _contactRepository.Setup(c => c.FindOne(c => c.ClientId == idClient && c.Id == idContact)).Returns(Task.FromResult(Contact));
+            var contact = new ContactEntity { Name = "Test", Client = _client, Id = idContact };
+            _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contact));
 
-            _contactService.Delete(idClient, idContact);
+            _contactService.Delete(_client.Id, idContact);
 
             _contactRepository.Verify(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>()));
             _contactRepository.Verify(c => c.Delete(It.IsAny<ContactEntity>()));
@@ -99,10 +102,9 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         [Test]
         public void ShouldNotDeleteInexistentContact()
         {
-            var idClient = Guid.NewGuid();
             var idContact = Guid.NewGuid();
 
-            _contactService.Delete(idClient, idContact);
+            _contactService.Delete(_client.Id, idContact);
 
             _contactRepository.Verify(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>()));
             _contactRepository.Verify(c => c.Delete(It.IsAny<ContactEntity>()), Times.Never);

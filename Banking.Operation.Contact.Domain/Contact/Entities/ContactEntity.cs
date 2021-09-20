@@ -10,10 +10,10 @@ namespace Banking.Operation.Contact.Domain.Contact.Entities
         {
         }
 
-        public ContactEntity(string name, Guid clientid)
+        public ContactEntity(string name, ClientEntity client)
         {
             Name = name;
-            ClientId = clientid;
+            Client = client;
             CreatedAt = DateTime.Now;
             CreatedBy = CreatorHelper.GetEntityCreatorIdentity();
         }
@@ -22,7 +22,7 @@ namespace Banking.Operation.Contact.Domain.Contact.Entities
         public Guid Id { get; set; }
         [MaxLength(150)]
         public string Name { get; set; }
-        public Guid ClientId { get; set; }
+        public ClientEntity Client { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
     }

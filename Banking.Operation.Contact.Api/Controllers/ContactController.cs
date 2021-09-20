@@ -29,20 +29,25 @@ namespace Banking.Operation.Contact.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<ResponseContactDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<List<ResponseContactDto>> GetAll(Guid clientid)
+        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<ResponseContactDto>>> GetAll(Guid clientid)
         {
             _logger.LogInformation("Receive GetAll...");
 
             try
             {
-                var Contact = _ContactService.GetAll(clientid);
+                var contact = await _ContactService.GetAll(clientid);
 
-                if (!Contact.Any())
+                if (!contact.Any())
                 {
                     return NoContent();
                 }
 
-                return Ok(Contact);
+                return Ok(contact);
+            }
+            catch (BussinessException bex)
+            {
+                return BadRequest(new BussinessMessage(bex.Type, bex.Message));
             }
             catch (Exception ex)
             {
@@ -54,6 +59,7 @@ namespace Banking.Operation.Contact.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetOne(Guid clientid, Guid id)
         {
             _logger.LogInformation("Receive GetOne...");
@@ -69,6 +75,10 @@ namespace Banking.Operation.Contact.Api.Controllers
 
                 return Ok(Contact);
             }
+            catch (BussinessException bex)
+            {
+                return BadRequest(new BussinessMessage(bex.Type, bex.Message));
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"GetOne exception: {ex}");
@@ -78,7 +88,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Save(Guid clientid, RequestContactDto client)
         {
             _logger.LogInformation("Receive Save...");
@@ -102,7 +112,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Update(Guid clientid, Guid id, RequestContactDto Contact)
         {
             _logger.LogInformation("Receive Update...");
@@ -113,6 +123,10 @@ namespace Banking.Operation.Contact.Api.Controllers
 
                 return Ok(ContactSaved);
             }
+            catch (BussinessException bex)
+            {
+                return BadRequest(new BussinessMessage(bex.Type, bex.Message));
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Update exception: {ex}");
@@ -122,7 +136,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(Guid clientid, Guid id)
         {
             _logger.LogInformation("Receive Delete...");
@@ -132,6 +146,10 @@ namespace Banking.Operation.Contact.Api.Controllers
                 await _ContactService.Delete(clientid, id);
 
                 return Ok();
+            }
+            catch (BussinessException bex)
+            {
+                return BadRequest(new BussinessMessage(bex.Type, bex.Message));
             }
             catch (Exception ex)
             {
