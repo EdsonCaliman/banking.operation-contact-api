@@ -9,12 +9,14 @@ namespace Banking.Operation.Contact.Domain.Contact.Dtos
         {
             Id = entity.Id;
             Name = entity.Name;
+            Account = entity.Account;
             CreatedAt = entity.CreatedAt;
             CreatedBy = entity.CreatedBy;
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public int Account { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
     }

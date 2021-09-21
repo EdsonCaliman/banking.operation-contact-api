@@ -1,5 +1,4 @@
-﻿using Banking.Operation.Client.Domain.Client.Services;
-using Banking.Operation.Contact.Domain.Abstractions.Exceptions;
+﻿using Banking.Operation.Contact.Domain.Abstractions.Exceptions;
 using Banking.Operation.Contact.Domain.Contact.Dtos;
 using Banking.Operation.Contact.Domain.Contact.Entities;
 using Banking.Operation.Contact.Domain.Contact.Repositories;
@@ -33,18 +32,6 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
             return contactList.Select(c => new ResponseContactDto(c)).ToList();
         }
 
-        private async Task<ClientEntity> ValidateClient(Guid clientid)
-        {
-            var client = await _clientService.GetOne(clientid);
-
-            if (client is null)
-            {
-                throw new BussinessException("Operation not performed", "Client not registered");
-            }
-
-            return client;
-        }
-
         public async Task<ResponseContactDto> GetOne(Guid clientid, Guid id)
         {
             await ValidateClient(clientid);
@@ -58,11 +45,18 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
         {
             var client = await ValidateClient(clientid);
 
-            var contactEntity = new ContactEntity(contact.Name, client);
-
-            if (await _contactRepository.FindOne(c => c.Client.Id == clientid && c.Name == contact.Name) != null)
+            if (client.Account == contact.Account)
             {
-                throw new BussinessException("Operation not performed", "Contact already registered");
+                throw new BussinessException("Operation not performed", "Client and account belong to same register");
+            }
+
+            await ValidateAccount(contact.Account);
+
+            var contactEntity = new ContactEntity(contact.Name, client, contact.Account);
+
+            if (await _contactRepository.FindOne(c => c.Client.Id == clientid && c.Account == contact.Account) != null)
+            {
+                throw new BussinessException("Operation not performed", "Account already registered");
             }
 
             await _contactRepository.Add(contactEntity);
@@ -71,6 +65,8 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
 
             return contactDto;
         }
+
+
 
         public async Task<ResponseContactDto> Update(Guid clientid, Guid id, RequestContactDto contact)
         {
@@ -97,6 +93,28 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
             }
 
             _contactRepository.Delete(contact);
+        }
+
+        private async Task<ClientEntity> ValidateClient(Guid clientid)
+        {
+            var client = await _clientService.GetOne(clientid);
+
+            if (client is null)
+            {
+                throw new BussinessException("Operation not performed", "Client not registered");
+            }
+
+            return client;
+        }
+
+        private async Task ValidateAccount(int account)
+        {
+            var client = await _clientService.FindByAccount(account);
+
+            if (client is null)
+            {
+                throw new BussinessException("Operation not performed", "Account not registered");
+            }
         }
     }
 }

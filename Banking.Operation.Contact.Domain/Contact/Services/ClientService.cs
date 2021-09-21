@@ -1,5 +1,4 @@
-﻿using Banking.Operation.Client.Domain.Client.Services;
-using Banking.Operation.Contact.Domain.Contact.Entities;
+﻿using Banking.Operation.Contact.Domain.Contact.Entities;
 using Banking.Operation.Contact.Domain.Contact.Repositories;
 using System;
 using System.Threading.Tasks;
@@ -13,6 +12,11 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
         public ClientService(IClientRepository clientRepository)
         {
             _clientRepository = clientRepository;
+        }
+
+        public async Task<ClientEntity> FindByAccount(int account)
+        {
+            return await _clientRepository.FindByAccount(account);
         }
 
         public async Task<ClientEntity> GetOne(Guid id)

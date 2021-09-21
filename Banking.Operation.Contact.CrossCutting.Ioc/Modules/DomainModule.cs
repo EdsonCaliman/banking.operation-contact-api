@@ -1,5 +1,4 @@
-﻿using Banking.Operation.Client.Domain.Client.Services;
-using Banking.Operation.Contact.Domain.Contact.Services;
+﻿using Banking.Operation.Contact.Domain.Contact.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Net.Core.Template.CrossCutting.Ioc.Modules

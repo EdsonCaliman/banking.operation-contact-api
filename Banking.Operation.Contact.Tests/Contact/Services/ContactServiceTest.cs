@@ -1,5 +1,4 @@
-﻿using Banking.Operation.Client.Domain.Client.Services;
-using Banking.Operation.Contact.Domain.Contact.Dtos;
+﻿using Banking.Operation.Contact.Domain.Contact.Dtos;
 using Banking.Operation.Contact.Domain.Contact.Entities;
 using Banking.Operation.Contact.Domain.Contact.Repositories;
 using Banking.Operation.Contact.Domain.Contact.Services;
@@ -19,6 +18,7 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         private Mock<IContactRepository> _contactRepository;
         private Mock<IClientService> _clientService;
         private ClientEntity _client;
+        private int _contactAccout;
 
         [SetUp]
         public void SetUp()
@@ -28,15 +28,17 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
             _contactService = new ContactService(_contactRepository.Object, _clientService.Object);
 
             var clientId = Guid.NewGuid();
-            _client = new ClientEntity { Id = clientId, Name = "Test", Email = "test" };
+            _contactAccout = 3452;
+            _client = new ClientEntity { Id = clientId, Name = "Test", Email = "test", Account = 1324 };
             _clientService.Setup(c => c.GetOne(clientId)).Returns(Task.FromResult(_client));
+            _clientService.Setup(c => c.FindByAccount(_contactAccout)).Returns(Task.FromResult(_client));
         }
 
         [Test]
         public void ShouldReturnContact()
         {
             var idContact = Guid.NewGuid();
-            var contact = new ContactEntity("Test", _client);
+            var contact = new ContactEntity("Test", _client, _contactAccout);
             _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contact));
 
             var ContactSaved = _contactService.GetOne(_client.Id, idContact);
@@ -48,8 +50,8 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         public async Task ShouldReturnAllContacts()
         {
             var contactList = new List<ContactEntity> {
-                new ContactEntity("Test", _client),
-                new ContactEntity("Test", _client)
+                new ContactEntity("Test", _client, _contactAccout),
+                new ContactEntity("Test", _client, _contactAccout)
                 }.AsQueryable();
             _contactRepository.Setup(c => c.Get()).Returns(contactList);
 
@@ -62,7 +64,7 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         [Test]
         public void ShouldSaveContact()
         {
-            var contact = new RequestContactDto { Name = "test" };
+            var contact = new RequestContactDto { Name = "test", Account = _contactAccout };
 
             var contactSaved = _contactService.Save(_client.Id, contact);
 
@@ -76,7 +78,7 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         {
             var idContact = Guid.NewGuid();
             var contact = new RequestContactDto { Name = "test" };
-            var contactSaved = new ContactEntity("other", _client);
+            var contactSaved = new ContactEntity("other", _client, _contactAccout);
             _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contactSaved));
 
             var ContactUpdated = await _contactService.Update(_client.Id, idContact, contact);
