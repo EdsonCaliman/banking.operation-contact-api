@@ -29,7 +29,7 @@ namespace Banking.Operation.Contact.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<ResponseContactDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BussinessMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<List<ResponseContactDto>>> GetAll(Guid clientid)
         {
             _logger.LogInformation("Receive GetAll...");
@@ -59,7 +59,7 @@ namespace Banking.Operation.Contact.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BussinessMessage), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetOne(Guid clientid, Guid id)
         {
             _logger.LogInformation("Receive GetOne...");
@@ -88,7 +88,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BussinessMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Save(Guid clientid, RequestContactDto client)
         {
             _logger.LogInformation("Receive Save...");
