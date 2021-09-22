@@ -27,7 +27,11 @@ This component will be responsible for register the contacts, attending the crud
 
 # How to run
 
-With a docker already installed run:
+With a docker already installed:
+
+Run first the project: https://github.com/EdsonCaliman/banking.operation-contact-api
+
+After run:
 
 docker-compose up -d
 
