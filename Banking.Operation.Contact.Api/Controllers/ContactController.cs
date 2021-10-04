@@ -18,12 +18,12 @@ namespace Banking.Operation.Contact.Api.Controllers
     public class ContactController : Controller
     {
         private readonly ILogger<ContactController> _logger;
-        private readonly IContactService _ContactService;
+        private readonly IContactService _contactService;
 
         public ContactController(ILogger<ContactController> logger, IContactService ContactService)
         {
             _logger = logger;
-            _ContactService = ContactService;
+            _contactService = ContactService;
         }
 
         [HttpGet]
@@ -36,7 +36,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
             try
             {
-                var contact = await _ContactService.GetAll(clientid);
+                var contact = await _contactService.GetAll(clientid);
 
                 if (!contact.Any())
                 {
@@ -66,7 +66,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
             try
             {
-                var Contact = await _ContactService.GetOne(clientid, id);
+                var Contact = await _contactService.GetOne(clientid, id);
 
                 if (Contact is null)
                 {
@@ -95,7 +95,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
             try
             {
-                var ContactSaved = await _ContactService.Save(clientid, client);
+                var ContactSaved = await _contactService.Save(clientid, client);
 
                 return Ok(ContactSaved);
             }
@@ -113,13 +113,13 @@ namespace Banking.Operation.Contact.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ResponseContactDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(List<BussinessMessage>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Update(Guid clientid, Guid id, RequestContactDto Contact)
+        public async Task<ActionResult> Update(Guid clientid, Guid id, RequestUpdateContactDto contact)
         {
             _logger.LogInformation("Receive Update...");
 
             try
             {
-                var ContactSaved = await _ContactService.Update(clientid, id, Contact);
+                var ContactSaved = await _contactService.Update(clientid, id, contact);
 
                 return Ok(ContactSaved);
             }
@@ -143,7 +143,7 @@ namespace Banking.Operation.Contact.Api.Controllers
 
             try
             {
-                await _ContactService.Delete(clientid, id);
+                await _contactService.Delete(clientid, id);
 
                 return Ok();
             }

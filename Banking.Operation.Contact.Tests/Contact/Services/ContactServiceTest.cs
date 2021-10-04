@@ -77,7 +77,7 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
         public async Task ShouldUpdateContact()
         {
             var idContact = Guid.NewGuid();
-            var contact = new RequestContactDto { Name = "test" };
+            var contact = new RequestUpdateContactDto { Name = "test" };
             var contactSaved = new ContactEntity("other", _client, _contactAccout);
             _contactRepository.Setup(c => c.FindOne(It.IsAny<Expression<Func<ContactEntity, bool>>>())).Returns(Task.FromResult(contactSaved));
 

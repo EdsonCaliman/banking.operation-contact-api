@@ -68,7 +68,7 @@ namespace Banking.Operation.Contact.Domain.Contact.Services
 
 
 
-        public async Task<ResponseContactDto> Update(Guid clientid, Guid id, RequestContactDto contact)
+        public async Task<ResponseContactDto> Update(Guid clientid, Guid id, RequestUpdateContactDto contact)
         {
             await ValidateClient(clientid);
 
