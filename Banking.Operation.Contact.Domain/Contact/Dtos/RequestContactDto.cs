@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Banking.Operation.Contact.Domain.Contact.Dtos
 {
+    [ExcludeFromCodeCoverage]
     public class RequestContactDto
     {
         [Required(ErrorMessage = "Name is mandatory")]

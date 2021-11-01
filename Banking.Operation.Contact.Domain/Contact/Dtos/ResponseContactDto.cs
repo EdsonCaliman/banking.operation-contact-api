@@ -1,8 +1,10 @@
 ﻿using Banking.Operation.Contact.Domain.Contact.Entities;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Banking.Operation.Contact.Domain.Contact.Dtos
 {
+    [ExcludeFromCodeCoverage]
     public class ResponseContactDto
     {
         public ResponseContactDto(ContactEntity entity)

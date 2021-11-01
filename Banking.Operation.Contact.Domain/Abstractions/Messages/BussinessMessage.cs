@@ -1,5 +1,9 @@
-﻿namespace Banking.Operation.Contact.Domain.Abstractions.Messages
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Banking.Operation.Contact.Domain.Abstractions.Messages
 {
+    [ExcludeFromCodeCoverageAttribute]
+
     public class BussinessMessage
     {
         public BussinessMessage(string type, string message)
