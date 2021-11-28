@@ -2,7 +2,7 @@
 
 namespace Banking.Operation.Contact.Domain.Abstractions.Messages
 {
-    [ExcludeFromCodeCoverageAttribute]
+    [ExcludeFromCodeCoverage]
 
     public class BussinessMessage
     {

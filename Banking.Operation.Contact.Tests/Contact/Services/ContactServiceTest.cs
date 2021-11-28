@@ -29,7 +29,15 @@ namespace Banking.Operation.Contact.Tests.Contact.Services
 
             var clientId = Guid.NewGuid();
             _contactAccout = 3452;
-            _client = new ClientEntity { Id = clientId, Name = "Test", Email = "test", Account = 1324 };
+            _client = new ClientEntity 
+            { 
+                Id = clientId, 
+                Name = "Test", 
+                Email = "test", 
+                Account = 1324, 
+                CreatedAt = DateTime.Now, 
+                CreatedBy = "test" 
+            };
             _clientService.Setup(c => c.GetOne(clientId)).Returns(Task.FromResult(_client));
             _clientService.Setup(c => c.FindByAccount(_contactAccout)).Returns(Task.FromResult(_client));
         }
